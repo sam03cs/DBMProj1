@@ -170,13 +170,22 @@ public class Table
      * @param keyVal  the given key value
      * @return  a table with the tuple satisfying the key predicate
      */
+    // SAM WILSON
     public Table select (KeyType keyVal)
     {
         out.println ("RA> " + name + ".select (" + keyVal + ")");
 
         List <Comparable []> rows = new ArrayList <> ();
 
-        //  T O   B E   I M P L E M E N T E D 
+        try{
+            Comparable [] selected = index.get(keyVal);
+            if(selected != null){
+                rows = new ArrayList<> ();
+                rows.add(selected);
+            }
+        }catch(Exception e){
+            System.out.println("Inputted parameters not met");
+        }
 
         return new Table (name + count++, attribute, domain, key, rows);
     } // select

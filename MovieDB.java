@@ -114,6 +114,34 @@ class MovieDB
         Table t_select2 = movie.select (t -> (Integer) t[movie.col("year")] < 1980);
         t_select2.print ();
 
+        //--------------------- select: <, &&, >
+
+        out.println();
+        Table t_select3 = movie.select (t -> (Integer) t[movie.col("year")] < 1980 &&
+                                             (Integer) t[movie.col("year")] > 1960);
+        t_select3.print ();
+
+        //--------------------- select: <, equals 
+
+        out.println();
+        Table t_select4 = movie.select (t -> (Integer) t[movie.col("year")] < 1980 &&
+                                        t[movie.col("title")].equals ("Star_Wars"));
+        t_select4.print ();
+
+        //--------------------- select: <, or, equals 
+
+        out.println();
+        Table t_select5 = movie.select (t -> (Integer) t[movie.col("year")] < 1990 ||
+                                        t[movie.col("title")].equals ("Star_Wars"));
+        t_select5.print ();
+
+        //--------------------- select: <, && , !equal
+
+        out.println();
+        Table t_select6 = movie.select (t -> (Integer) t[movie.col("year")] < 1990 &&
+                                        !(t[movie.col("title")].equals ("Star_Wars")));
+        t_select6.print ();
+
         //--------------------- indexed select: key
 
         out.println ();
