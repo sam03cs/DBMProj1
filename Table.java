@@ -205,7 +205,15 @@ public class Table
 
         List <Comparable []> rows = new ArrayList <> ();
 
-        //  T O   B E   I M P L E M E N T E D 
+        rows.addAll(tuples); // Adds the tuples from first table to the result
+        for (KeyType k : table2.index.keySet()) // Iterates through keys of the second table
+        {
+            // If the first table does not contain tuple that matches the key, k, add the row to the result.
+            if (!index.containsKey(k))
+            {
+                rows.add(table2.index.get(k)); // Adds the key to table2
+            } // if
+        }// for loop 
 
         return new Table (name + count++, attribute, domain, key, rows);
     } // union
@@ -238,6 +246,8 @@ public class Table
      *
      * #usage movie.join ("studioNo", "name", studio)
      *
+     * @author Angel Crawford
+     *
      * @param attribute1  the attributes of this table to be compared (Foreign Key)
      * @param attribute2  the attributes of table2 to be compared (Primary Key)
      * @param table2      the rhs table in the join operation
@@ -253,7 +263,48 @@ public class Table
 
         List <Comparable []> rows = new ArrayList <> ();
 
-        //  T O   B E   I M P L E M E N T E D 
+        //table1 tuple
+        Comparable[] table1tuple;
+        //table2 tuple
+        Comparable[] table2tuple;
+        //concatenated tuple from table1 and table 2
+        Comparable[] finalTuple;
+
+        //get column position of the attribute from table1
+        int size = t_attrs.length;
+        int size2 = u_attrs.length;
+
+        int [] getAttrCol1 = new int[size];
+        for (int i=0; i<size; i++) {
+            getAttrCol1[i] = col(t_attrs[i]);
+        }
+
+        int [] getAttrCol2 = new int[size2];
+        for (int i=0; i<size2; i++) {
+            getAttrCol2[i] = table2.col(u_attrs[i]);
+        }
+
+        //get column position of the attribute from table2 being 
+        //joined to table1.
+        try {
+            for (int i =0; i<tuples.size(); i++) {
+                table1tuple = tuples.get(i);
+                for (int j=0; j<table2.tuples.size(); j++) {
+                    table2tuple = table2.tuples.get(j);
+                    //if attribute names are the same then combine tuples and add to arraylist
+                    for (int y=0; y<size; y++) {
+                        for (int k=0; k<size2; k++) {
+                            if (table1tuple[getAttrCol1[y]].equals(table2tuple[getAttrCol2[k]])) {
+                                finalTuple = ArrayUtil.concat(table1tuple, table2tuple);
+                                rows.add(finalTuple);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("CANT FIND ATTRIBUTE");
+        } 
 
         return new Table (name + count++, ArrayUtil.concat (attribute, table2.attribute),
                                           ArrayUtil.concat (domain, table2.domain), key, rows);
@@ -266,6 +317,8 @@ public class Table
      *
      * #usage movieStar.join (starsIn)
      *
+     * @author Angel Crawford
+     *
      * @param table2  the rhs table in the join operation
      * @return  a table with tuples satisfying the equality predicate
      */
@@ -275,9 +328,93 @@ public class Table
 
         List <Comparable []> rows = new ArrayList <> ();
 
-        //  T O   B E   I M P L E M E N T E D 
+        List<Integer> match_1 = new ArrayList<>();
+        List<Integer> match_2 = new ArrayList<>(); 
+
+
+        /**
+         * Checkk which attributes in table1 are in table2
+         * All matches from table1 in ArrayList match_1
+         * All matches from table2 in ArrayList match_2
+         */
+         int matched = 0;
+         for (int i=0; i< this.attribute.length; i++) {
+            for (int j=0; j< table2.attribute.length; j++) {
+                if ((table2.attribute[j]).equals(this.attribute[i])) {
+                    match_1.add(i);
+                    match_2.add(j);
+                }
+            }
+         }
+
+         /**
+          * Checks all tuples in both tables to get intersection, then add to final table.
+          */
+          for(int i=0; i<this.tuples.size(); i++) {
+            for(int j=0; j<table2.tuples.size(); j++) {
+                matched = 0;
+                for(int y=0; y<match_1.size(); y++) {
+                    if(this.tuples.get(i)[match_1.get(y)].equals(table2.tuples.get(j)[match_2.get(y)])) {
+                        matched++;
+                    }
+                }
+                if(matched == match_1.size()) {
+                    Comparable[] table2_tuple = new Comparable[table2.attribute.length-match_1.size()];
+                    int col_counter = 0;
+                    int table2_col_counter = 0;
+
+                    if(table2_tuple.length != 0){
+                        for(int y=0; y < table2.attribute.length; y++){
+                            if(col_counter >= match_2.size()){
+                                table2_tuple[table2_col_counter] = table2.tuples.get(j)[y];
+                                table2_col_counter++;
+                            }
+                            else if(match_2.get(col_counter) != y){
+                                table2_tuple[table2_col_counter] = table2.tuples.get(j)[y];
+                                table2_col_counter++;
+                            }else{
+                                col_counter++;
+                            }
+                        }
+                    }
+                    rows.add(ArrayUtil.concat(this.tuples.get(i), table2_tuple));
+                }
+            }
+          }
 
         // FIX - eliminate duplicate columns
+        
+        /**
+         * Checks for duplicate names in the second table and appends a '2'
+         * to the end of the name to later be distinguished and not used as
+         * new attributes for the new table.
+         */
+        int duplicates = 0;
+        for(int i=0; i < this.attribute.length; i++){
+            for( int j=0; j < table2.attribute.length; j++){
+                if(this.attribute[i].equals(table2.attribute[j])){
+                    table2.attribute[j] = table2.attribute[j] + "2";
+                    duplicates++;
+                }
+            }
+        }
+
+        /**
+         * Checks if the attributes from table two were duplicates
+         * by checking if a 2 was at the end of the attribute name
+         * and only adds to the new attributes arraylist if it isn't
+         * a duplicate.
+         */
+        String[] newAttr = new String[table2.attribute.length - duplicates];
+        int attr_to_add=0;
+        for(int i=0; i < table2.attribute.length; i++){
+            char charCheck = table2.attribute[i].charAt(table2.attribute[i].length()-1);
+            if(charCheck != '2'){
+                newAttr[attr_to_add] = table2.attribute[i];
+                attr_to_add++;
+            }
+        }
+        
         return new Table (name + count++, ArrayUtil.concat (attribute, table2.attribute),
                                           ArrayUtil.concat (domain, table2.domain), key, rows);
     } // join
