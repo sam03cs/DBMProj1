@@ -143,6 +143,12 @@ public class Table
 
         //  T O   B E   I M P L E M E N T E D 
 
+        tuples.stream().forEach((tuple) -> {
+
+            rows.add(this.extract(tuple, attrs));
+
+        });
+
         return new Table (name + count++, attrs, colDomain, newKey, rows);
     } // project
 
