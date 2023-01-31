@@ -620,7 +620,24 @@ public class Table
      */
     private boolean typeCheck (Comparable [] t)
     { 
-        //  T O   B E   I M P L E M E N T E D 
+        //check to make sure that the lengths are the same, if not return error
+        if(domain.length != t.length){
+            System.err.println("Length is not the same");
+            return false;
+        }
+
+        //checks to ensure lengths are the same
+        if(domain.length == t.length){
+            //iterates through  domain
+            int j = 0;
+            for(int i = 0; i < domain.length; i++){
+                //compares the objects to see if they're the same
+                //if not, return an error and return false
+                if(domain[i] != t[j].getClass())
+                    System.err.println("Error, not in the proper domain");
+                j++;
+            }
+        } 
 
         return true;
     } // typeCheck
