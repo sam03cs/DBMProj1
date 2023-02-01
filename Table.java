@@ -233,12 +233,14 @@ public class Table
     public Table minus (Table table2)
     {
         out.println ("RA> " + name + ".minus (" + table2.name + ")");
-        if (! compatible (table2)) return null;
+        if (!compatible(table2)) {
+            return null;
+        }
 
+        boolean True; 
         List <Comparable []> rows = new ArrayList <> ();
 
         for (Comparable[] temp : tuples) {
-            boolean True;
             True = false;
             for (Comparable[] table1 : table2.tuples) {
                 if (temp == table1) {
