@@ -176,15 +176,10 @@ public class Table
         out.println ("RA> " + name + ".select (" + keyVal + ")");
 
         List <Comparable []> rows = new ArrayList <> ();
-
-        try{
-            Comparable [] selected = index.get(keyVal);
-            if(selected != null){
-                rows = new ArrayList<> ();
-                rows.add(selected);
-            }
-        }catch(Exception e){
-            System.out.println("Inputted parameters not met");
+        Comparable [] selected = index.get(keyVal);
+        if(selected != null){
+            rows = new ArrayList<> ();
+            rows.add(selected);
         }
 
         return new Table (name + count++, attribute, domain, key, rows);
@@ -226,7 +221,20 @@ public class Table
 
         List <Comparable []> rows = new ArrayList <> ();
 
-        //  T O   B E   I M P L E M E N T E D 
+        for (Comparable[] temp : tuples) {
+            boolean True;
+            True = false;
+
+            for (Comparable[] table1 : table2.tuples) {
+
+                if (temp == table1) {
+                    True = true;
+                    break;
+                }
+            } if (!True) {
+                rows.add(temp);
+            }
+        } 
 
         return new Table (name + count++, attribute, domain, key, rows);
     } // minus
