@@ -173,10 +173,11 @@ public class Table
      * Select the tuples satisfying the given key predicate (key = value).  Use an index
      * (Map) to retrieve the tuple with the given key value.
      *
+     * @author Sam Wilson
+     * 
      * @param keyVal  the given key value
      * @return  a table with the tuple satisfying the key predicate
      */
-    // SAM WILSON
     public Table select (KeyType keyVal)
     {
         out.println ("RA> " + name + ".select (" + keyVal + ")");
@@ -224,6 +225,7 @@ public class Table
      * compatible.
      *
      * #usage movie.minus (show)
+     * @author Sam Wilson
      *
      * @param table2  The rhs table in the minus operation
      * @return  a table representing the difference
@@ -238,9 +240,7 @@ public class Table
         for (Comparable[] temp : tuples) {
             boolean True;
             True = false;
-
             for (Comparable[] table1 : table2.tuples) {
-
                 if (temp == table1) {
                     True = true;
                     break;
