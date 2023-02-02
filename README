@@ -1,0 +1,11 @@
+Sam Wilson
+Angel Crawford
+Kohl Nguyen
+
+To compile:
+
+javac Table.java MovieDB.java ArrayUtil.java Keytype.java
+
+To run:
+
+java MovieDB
